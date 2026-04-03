@@ -29,3 +29,8 @@ sls_sales     INT ,
 sls_quantity  INT ,
 sls_price     INT 
 );
+
+CREATE TABLE bronze.erp_loc_a101 (
+cid   NVARCHAR(50) ,
+cntry NVARCHAR(50) 
+) ;
