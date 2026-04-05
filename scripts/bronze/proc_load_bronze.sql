@@ -4,6 +4,9 @@ PRINT '===================================================================='
 PRINT 'Loading Bronze layer'
 PRINT '===================================================================='
 -- It is good practice to truncate the first table too!
+PRINT '===================================================================='
+PRINT 'Loading CRM tables'
+PRINT '===================================================================='
 TRUNCATE TABLE bronze.crm_cust_info;
 BULK INSERT bronze.crm_cust_info
 FROM 'C:\dwh-project\cust_info.csv'
@@ -30,7 +33,9 @@ WITH (
      FIELDTERMINATOR = ',' ,
      TABLOCK
 ) ;
-
+PRINT '===================================================================='
+PRINT 'Loading ERP Tables'
+PRINT '===================================================================='
 TRUNCATE TABLE bronze.erp_loc_a101 ;
 BULK INSERT bronze.erp_loc_a101
 FROM 'C:\dwh-project\LOC_A101.csv'
