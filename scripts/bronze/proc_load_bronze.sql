@@ -1,14 +1,8 @@
-BULK INSERT bronze.crm_cust_info
-FROM 'C:\dwh-project\cust_info.csv'
-WITH (
-     FIRSTROW = 2,
-     FIELDTERMINATOR = ',' ,
-     TABLOCK
-) ;
+CREATE OR ALTER PROCEDURE bronze.load_bronze AS
+BEGIN
 
-SELECT COUNT(*) FROM bronze.crm_cust_info ;  /* quality check */
-
-TRUNCATE TABLE bronze.crm_cust_info ;
+-- It is good practice to truncate the first table too!
+TRUNCATE TABLE bronze.crm_cust_info;
 BULK INSERT bronze.crm_cust_info
 FROM 'C:\dwh-project\cust_info.csv'
 WITH (
@@ -61,3 +55,4 @@ WITH (
      FIELDTERMINATOR = ',' ,
      TABLOCK
 ) ;
+END 
