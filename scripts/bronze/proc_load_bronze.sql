@@ -64,4 +64,6 @@ WITH (
      TABLOCK
 ) ;
 END TRY 
+     BEGIN CATCH 
+     END CATCH
 END 
