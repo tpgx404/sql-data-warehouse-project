@@ -1,5 +1,6 @@
 CREATE OR ALTER PROCEDURE bronze.load_bronze AS
 BEGIN
+     BEGIN TRY
 PRINT '===================================================================='
 PRINT 'Loading Bronze layer'
 PRINT '===================================================================='
@@ -62,4 +63,5 @@ WITH (
      FIELDTERMINATOR = ',' ,
      TABLOCK
 ) ;
+END TRY 
 END 
