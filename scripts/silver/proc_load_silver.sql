@@ -17,6 +17,56 @@ Usage Example:
     EXEC Silver.load_silver;
 ===============================================================================
 */
+/*
+===============================================================================
+LOGIC BREAKDOWN - PART 1: STRING CLEANING & UNIQUE RECORDS
+===============================================================================
+1. THE "DEDUP" PATTERN (ROW_NUMBER):
+    - Why: Bronze often has multiple rows for one customer. 
+    - Logic: We group by 'ID' and sort by 'Date' (Descending). 
+    - Result: The newest record gets Flag = 1. We only keep Flag 1 to 
+      ensure our Silver layer has no duplicates.
+
+2. STRING GROOMING (The "Silly" but Vital stuff):
+    - TRIM(): Essential because "John" and "John " look different to a computer.
+      We strip those invisible spaces to prevent Join errors later.
+    - UPPER(): Standardizes case. It ensures 'm' and 'M' both become 'Male'.
+    - SUBSTRING() & REPLACE(): Used to "dissect" combined columns. 
+      Example: Extracting a Category ID out of a long Product Key string.
+    - PREFIX REMOVAL: Uses 'LIKE NAS%' to identify and chop off system 
+      prefixes from IDs, leaving only the clean numeric ID.
+
+3. NULL HANDLING (ISNULL / COALESCE):
+    - We replace NULL costs with 0. This prevents "Math Breakage" where 
+      (10 + NULL) would normally equal NULL. We want (10 + 0 = 10).
+===============================================================================
+*/
+/*
+===============================================================================
+LOGIC BREAKDOWN - PART 2: ADVANCED INTEGRITY & TIMELINES
+===============================================================================
+1. DATE RECONSTRUCTION (The Double Cast):
+    - Problem: Dates coming in as numbers (20240101) or invalid lengths.
+    - Solution: We check the length (must be 8 digits). We then cast the 
+      Number -> String -> Date. This turns "junk" into a clickable calendar date.
+
+2. PRODUCT HISTORICAL TIMELINES (LEAD Function):
+    - Logic: 'LEAD' looks at the "Next Row" for the same product. 
+    - Purpose: It sets the 'End Date' of the current product version to 
+      exactly 1 day before the 'Start Date' of the new version.
+    - Result: This creates a seamless timeline with no gaps in history.
+
+3. RE-CALCULATED SALES (The "Trust but Verify" Rule):
+    - Logic: Silver does NOT trust the source 'Total Sales' column.
+    - Action: We manually calculate (Quantity * Price).
+    - Why: If the source says 2 x $10 = $50, we fix it to $20. 
+      This ensures the Gold layer reports are mathematically 100% accurate.
+
+4. BATCH TRACING:
+    - We use @start_time and @end_time variables to PRINT how long each 
+      table took to load. This helps us find "bottlenecks" if the script gets slow.
+===============================================================================
+*/
 
 CREATE OR ALTER PROCEDURE silver.load_silver AS
 BEGIN
