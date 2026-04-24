@@ -92,11 +92,6 @@ data-warehouse-project/
 └── requirements.txt                    # Dependencies and requirements for the project
 ```
 ---
-
-## ☕ Stay Connected
-
-
-
 ---
 
 ## 🛡️ License
